@@ -3,68 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mercado Livre OAuth Callback</title>
+  <title>Mercado Livre - Iniciar Autorização</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; max-width: 600px; margin: 3rem auto; padding: 0 1rem; text-align: center; line-height: 1.6; }
-    .card { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,.05); }
-    .success { color: #1a7f37; border-color: #1a7f37; }
-    .error { color: #c0392b; border-color: #c0392b; }
-    code { background: #f0f0f0; padding: .2rem .5rem; border-radius: 4px; font-size: .9em; word-break: break-all; }
-    .token-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: left; font-family: monospace; font-size: .85rem; overflow-x: auto; white-space: pre-wrap; }
-    button { background: #ff6b00; color: white; border: none; padding: .75rem 1.5rem; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
-    button:hover { background: #e85d00; }
-    .hidden { display: none; }
+    body { font-family: system-ui, sans-serif; max-width: 600px; margin: 3rem auto; padding: 0 1rem; text-align: center; }
+    .btn { display: inline-block; margin-top: 1.5rem; padding: 1rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; text-decoration: none; }
+    .btn:hover { background: #2563eb; }
+    .info { margin-top: 2rem; padding: 1rem; background: #f1f5f9; border-radius: 8px; text-align: left; font-size: 0.9rem; color: #475569; }
+    code { background: #e2e8f0; padding: 0.2rem 0.4rem; border-radius: 4px; }
   </style>
 </head>
 <body>
-  <div class="card" id="card">
-    <h1>🔗 Callback OAuth - Mercado Livre</h1>
-    <p id="status">Processando...</p>
-    <div id="tokenArea" class="hidden">
-      <p><strong>Authorization Code capturado:</strong></p>
-      <div class="token-box" id="codeDisplay"></div>
-      <p>Copie o código acima e use no seu script/terminal para trocar por <code>access_token</code> + <code>refresh_token</code>.</p>
-      <button onclick="copyCode()">📋 Copiar Código</button>
-    </div>
-    <div id="errorArea" class="hidden">
-      <p><strong>Erro:</strong></p>
-      <div class="token-box" id="errorDisplay"></div>
-    </div>
+  <h1>🔗 Mercado Livre OAuth</h1>
+  <p>Clique no botão abaixo para autorizar a aplicação e obter os tokens de acesso.</p>
+
+  <a id="authBtn" class="btn" href="#">Autorizar com Mercado Livre</a>
+
+  <div class="info">
+    <strong>Configuração atual:</strong><br>
+    Client ID: <code>8327306475412154</code><br>
+    Redirect URI: <code>https://flaviomomoi.github.io/Hermes_Meli/callback.html</code><br>
+    Scopes: <code>read write offline_access</code>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const error = params.get('error');
-    const errorDesc = params.get('error_description');
-    const state = params.get('state');
+    const CLIENT_ID = '1643821230095558';
+    const REDIRECT_URI = 'https://flaviomomoi.github.io/Hermes_Meli/callback.html';
+    const SCOPES = 'read write offline_access';
 
-    const card = document.getElementById('card');
-    const status = document.getElementById('status');
-    const tokenArea = document.getElementById('tokenArea');
-    const errorArea = document.getElementById('errorArea');
-    const codeDisplay = document.getElementById('codeDisplay');
-    const errorDisplay = document.getElementById('errorDisplay');
+    const authUrl = `https://auth.mercadolibre.com.br/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
 
-    if (code) {
-      card.classList.add('success');
-      status.textContent = '✅ Autorização concedida!';
-      tokenArea.classList.remove('hidden');
-      codeDisplay.textContent = code;
-      // Opcional: envia para webhook/n8n/servidor seu
-      // fetch('https://seu-webhook.com/callback', { method: 'POST', body: JSON.stringify({ code, state }) });
-    } else if (error) {card.classList.add('error');
-      status.textContent = '❌ Erro na autorização';
-      errorArea.classList.remove('hidden');
-      errorDisplay.textContent = ${error}: ${errorDesc || 'Sem descrição'};
-    } else {
-      status.textContent = '⏳ Aguardando parâmetros... URL inválida.';
-    }
-
-    function copyCode() {
-      navigator.clipboard.writeText(codeDisplay.textContent);
-      alert('Código copiado! Cole no terminal/script.');
-    }
+    document.getElementById('authBtn').href = authUrl;
   </script>
 </body>
 </html>
